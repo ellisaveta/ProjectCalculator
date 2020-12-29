@@ -4,6 +4,7 @@
 using namespace std;
 int TransformIntoNumber(vector<int>);
 void Calculator(string);
+bool Validation(string);
 bool isNumber(char);
 bool isOperator(char);
 bool comparePrecendence(char, char);
@@ -11,9 +12,29 @@ double Calculate(double, double, char);
 int main()
 {
 	string input;
-	cin >> input; //da se opravi cheteneto na intervalite
+	getline(cin, input);
+	if (Validation(input))
+	{
+		cout << "NaN";
+		return 0;
+	}
 	Calculator(input);
 	return 0;
+}
+bool Validation(string input)
+{
+	if (input.empty()) return false;
+	for (int i = 0; i < input.length(); ++i)
+	{
+		if (isNumber(input[i]))
+		{
+			int j = i + 1;
+			while (input[j] == ' ' && j < input.length()) ++j;
+			if (isNumber(input[j])) return false;
+		}
+		else if (input[i] != '+' || input[i] != '-' || input[i] != '*' || input[i] != '/' || input[i] != '^' || input[i] != ' ') return false;
+	}
+	return true;
 }
 void Calculator(string input)
 {

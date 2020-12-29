@@ -1,6 +1,21 @@
+/**
+*
+* Solution to course project # 2
+* Introduction to programming course
+* Faculty of Mathematics and Informatics of Sofia University
+* Winter semester 2020/2021
+*
+* @author Elisaveta Georgieva
+* @idnumber 62591
+* @compiler VC
+*
+* <main functionality of Calculator>
+*
+*/
 #include <iostream>
 #include <string>
 #include <vector>
+#include <fstream>
 using namespace std;
 int TransformIntoNumber(vector<int>);
 void Calculator(string);
@@ -12,13 +27,20 @@ double Calculate(double, double, char);
 int main()
 {
 	string input;
-	getline(cin, input);
+	ifstream inputFile("InputFile.txt");
+	if (!inputFile.is_open())
+	{
+		cout << "File does not open correctly!";
+		return 0;
+	}
+	getline(inputFile, input);
 	if (Validation(input))
 	{
 		cout << "NaN";
 		return 0;
 	}
 	Calculator(input);
+	inputFile.close();
 	return 0;
 }
 bool Validation(string input)
@@ -26,13 +48,7 @@ bool Validation(string input)
 	if (input.empty()) return false;
 	for (int i = 0; i < input.length(); ++i)
 	{
-		if (isNumber(input[i]))
-		{
-			int j = i + 1;
-			while (input[j] == ' ' && j < input.length()) ++j;
-			if (isNumber(input[j])) return false;
-		}
-		else if (input[i] != '+' || input[i] != '-' || input[i] != '*' || input[i] != '/' || input[i] != '^' || input[i] != ' ') return false;
+		if (input[i] != '+' || input[i] != '-' || input[i] != '*' || input[i] != '/' || input[i] != '^' || input[i] != ' ') return false;
 	}
 	return true;
 }
@@ -91,14 +107,14 @@ void Calculator(string input)
 				if (operators.size() > 0) lastElementInOperators = operators[operators.size() - 1];
 				else
 				{
-					cout << "NaN"; //Not correct use of "()"
+					cout << "NaN"; //Incorrect use of "()"
 					return;
 				}
 			}
 			if (operators.size() > 0) lastElementInOperators = operators[operators.size() - 1];
-			if (lastElementInOperators == '(') operators.pop_back();
+			if (lastElementInOperators == '(') operators.pop_back(); //remove the '('
 			if (operators.size() > 0) lastElementInOperators = operators[operators.size() - 1];
-			if (lastElementInOperators == '^')
+			if (lastElementInOperators == '^') //If the last element is function, add it to the string
 			{
 				char op = lastElementInOperators;
 				shYardString.push_back(op);
@@ -112,7 +128,7 @@ void Calculator(string input)
 		lastElementInOperators = operators[operators.size() - 1];
 		if (lastElementInOperators == '(' || lastElementInOperators == ')')
 		{
-			cout << "NaN"; //Not correct use of "()"
+			cout << "NaN"; //Incorrect use of "()"
 			return;
 		}
 		char op = lastElementInOperators;

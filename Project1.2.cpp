@@ -3,7 +3,7 @@
 #include <vector>
 using namespace std;
 int TransformIntoNumber(vector<int>);
-void ShuntingYard(string);
+void Calculator(string);
 bool isNumber(char);
 bool isOperator(char);
 bool comparePrecendence(char, char);
@@ -12,14 +12,14 @@ int main()
 {
 	string input;
 	cin >> input; //da se opravi cheteneto na intervalite
-	ShuntingYard(input);
+	Calculator(input);
 	return 0;
 }
-void ShuntingYard(string input)
+void Calculator(string input)
 {
+//Shunting-Yard algorithm...
 	vector<char> shYardString;
 	vector<char> operators;
-	vector<int> currentNumber;
 	char lastElementInOperators;
 	for (int i = 0; i < input.length(); ++i)
 	{
@@ -99,12 +99,9 @@ void ShuntingYard(string input)
 		shYardString.push_back(' ');
 		operators.pop_back();
 	}
-	for (int i = 0; i < shYardString.size(); ++i)
-	{
-		cout << shYardString[i];
-	}
-	cout << endl;
+//Reversed Polish Notation algorithm...
 	vector<double> result;
+	vector<int> currentNumber;
 	for (int i = 0; i < shYardString.size(); ++i)
 	{
 		if (isNumber(shYardString[i]))

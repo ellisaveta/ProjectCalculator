@@ -56,7 +56,7 @@ bool Validation(string input)
 
 void Calculator(string input)
 {
-//Shunting-Yard algorithm...
+	//Shunting-Yard algorithm...
 	vector<char> shYardString;
 	vector<char> operators;
 	char lastElementInOperators;
@@ -192,10 +192,10 @@ void Calculator(string input)
 int TransformIntoNumber(const vector<int> currentNumber)
 {
 	int number = 0;
-	for (int i = 0; i < currentNumber.size(); ++i)
+	for(auto& i : currentNumber)
 	{
 		number *= 10;
-		number += currentNumber[i];
+		number += i;
 	}
 	return number;
 }

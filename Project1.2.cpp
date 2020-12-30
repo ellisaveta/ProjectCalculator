@@ -17,13 +17,13 @@
 #include <vector>
 #include <fstream>
 using namespace std;
-int TransformIntoNumber(vector<int>);
+int TransformIntoNumber(const vector<int>);
 void Calculator(string);
 bool Validation(string);
-bool isNumber(char);
-bool isOperator(char);
-bool comparePrecendence(char, char);
-double Calculate(double, double, char);
+bool IsNumber(const char);
+bool IsOperator(const char);
+bool ComparePrecendence(const char, const char);
+double Calculate(const double, const double, const char);
 int main()
 {
 	string input;
@@ -34,7 +34,7 @@ int main()
 		return 0;
 	}
 	getline(inputFile, input);
-	if (Validation(input))
+	if (!Validation(input))
 	{
 		cout << "NaN";
 		return 0;
@@ -43,15 +43,17 @@ int main()
 	inputFile.close();
 	return 0;
 }
+
 bool Validation(string input)
 {
 	if (input.empty()) return false;
 	for (int i = 0; i < input.length(); ++i)
 	{
-		if (input[i] != '+' || input[i] != '-' || input[i] != '*' || input[i] != '/' || input[i] != '^' || input[i] != ' ') return false;
+		if (IsNumber(input[i])==false && IsOperator(input[i])==false && input[i]!=' ' && input[i]!='(' && input[i]!=')') return false;
 	}
 	return true;
 }
+
 void Calculator(string input)
 {
 //Shunting-Yard algorithm...
@@ -60,13 +62,13 @@ void Calculator(string input)
 	char lastElementInOperators;
 	for (int i = 0; i < input.length(); ++i)
 	{
-		if (isNumber(input[i]))
+		if (IsNumber(input[i]))
 		{
 			do
 			{
 				shYardString.push_back(input[i]);
 				++i;
-			} while ((isNumber(input[i])) && i < input.length());
+			} while ((IsNumber(input[i])) && i < input.length());
 			shYardString.push_back(' ');
 			--i;
 		}
@@ -74,18 +76,21 @@ void Calculator(string input)
 		{
 			operators.push_back(input[i]);
 		}
-		else if (isOperator(input[i]))
+		else if (IsOperator(input[i]))
 		{
 			char o1 = input[i];
 			if (operators.size() > 0)
 			{
 				char o2 = operators[operators.size() - 1];
-				while (isOperator(o2) && comparePrecendence(o2, o1))
+				while (IsOperator(o2) && ComparePrecendence(o2, o1))
 				{
 					operators.pop_back();
 					shYardString.push_back(o2);
 					shYardString.push_back(' ');
-					if (operators.size() > 0) o2 = operators[operators.size() - 1];
+					if (operators.size() > 0)
+					{
+						o2 = operators[operators.size() - 1];
+					}
 					else break;
 				}
 			}
@@ -104,16 +109,25 @@ void Calculator(string input)
 				shYardString.push_back(op);
 				shYardString.push_back(' ');
 				operators.pop_back();
-				if (operators.size() > 0) lastElementInOperators = operators[operators.size() - 1];
+				if (operators.size() > 0)
+				{
+					lastElementInOperators = operators[operators.size() - 1];
+				}
 				else
 				{
 					cout << "NaN"; //Incorrect use of "()"
 					return;
 				}
 			}
-			if (operators.size() > 0) lastElementInOperators = operators[operators.size() - 1];
+			if (operators.size() > 0)
+			{
+				lastElementInOperators = operators[operators.size() - 1];
+			}
 			if (lastElementInOperators == '(') operators.pop_back(); //remove the '('
-			if (operators.size() > 0) lastElementInOperators = operators[operators.size() - 1];
+			if (operators.size() > 0)
+			{
+				lastElementInOperators = operators[operators.size() - 1];
+			}
 			if (lastElementInOperators == '^') //If the last element is function, add it to the string
 			{
 				char op = lastElementInOperators;
@@ -136,23 +150,23 @@ void Calculator(string input)
 		shYardString.push_back(' ');
 		operators.pop_back();
 	}
-//Reversed Polish Notation algorithm...
+	//Reversed Polish Notation algorithm...
 	vector<double> result;
 	vector<int> currentNumber;
 	for (int i = 0; i < shYardString.size(); ++i)
 	{
-		if (isNumber(shYardString[i]))
+		if (IsNumber(shYardString[i]))
 		{
 			currentNumber.clear();
 			do
 			{
 				currentNumber.push_back(shYardString[i] - 48);
 				++i;
-			}while (isNumber(shYardString[i]));
+			} while (IsNumber(shYardString[i]));
 			result.push_back(TransformIntoNumber(currentNumber));
 			--i;
 		}
-		else if (isOperator(shYardString[i]) || shYardString[i] == '^')
+		else if (IsOperator(shYardString[i]) || shYardString[i] == '^')
 		{
 			if (result.size() < 2)
 			{
@@ -174,7 +188,8 @@ void Calculator(string input)
 		return;
 	}
 }
-int TransformIntoNumber(vector<int> currentNumber)
+
+int TransformIntoNumber(const vector<int> currentNumber)
 {
 	int number = 0;
 	for (int i = 0; i < currentNumber.size(); ++i)
@@ -184,34 +199,38 @@ int TransformIntoNumber(vector<int> currentNumber)
 	}
 	return number;
 }
-bool isNumber(char symbol)
+
+bool IsNumber(const char symbol)
 {
-	return (symbol > 47 && symbol < 58) ? true : false;
+	return (symbol > 47 && symbol < 58);
 }
-bool isOperator(char symbol)
+
+bool IsOperator(const char symbol)
 {
-	return (symbol == '+' || symbol == '-' || symbol == '*' || symbol == '/' || symbol == '^') ? true : false;
+	return (symbol == '+' || symbol == '-' || symbol == '*' || symbol == '/' || symbol == '^');
 }
-bool comparePrecendence(char first, char sec)
+
+bool ComparePrecendence(const char first, const char sec)
 {
 	if (sec == first) return true;
 	switch (first)
 	{
-	case '+':
-		if (sec == '-') return true;
-		return false;
-	case '-':
-		if (sec == '+') return true;
-		return false;
-	case '*':
-		if (sec == '+' || sec == '-' || sec == '/') return true;
-		return false;
-	case '/':
-		if (sec == '+' || sec == '-' || sec == '*') return true;
-		return false;
+		case '+':
+			if (sec == '-') return true;
+			return false;
+		case '-':
+			if (sec == '+') return true;
+			return false;
+		case '*':
+			if (sec == '+' || sec == '-' || sec == '/') return true;
+			return false;
+		case '/':
+			if (sec == '+' || sec == '-' || sec == '*') return true;
+			return false;
 	}
 }
-double Calculate(double a, double b, char symbol)
+
+double Calculate(const double a, const double b, const char symbol)
 {
 	switch (symbol)
 	{

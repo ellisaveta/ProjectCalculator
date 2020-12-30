@@ -49,7 +49,17 @@ bool Validation(string input)
 	if (input.empty()) return false;
 	for (int i = 0; i < input.length(); ++i)
 	{
-		if (IsNumber(input[i])==false && IsOperator(input[i])==false && input[i]!=' ' && input[i]!='(' && input[i]!=')') return false;
+		if (input[i] == '/')
+		{
+			++i;
+			while (i < input.length() && input[i] == ' ')
+			{
+				++i;
+			}
+			if (input[i] == '0') return false;
+			--i;
+		}
+		else if (IsNumber(input[i])==false && IsOperator(input[i])==false && input[i]!=' ' && input[i]!='(' && input[i]!=')') return false;
 	}
 	return true;
 }
@@ -228,6 +238,7 @@ bool ComparePrecendence(const char first, const char sec)
 			if (sec == '+' || sec == '-' || sec == '*') return true;
 			return false;
 	}
+	//return false;
 }
 
 double Calculate(const double a, const double b, const char symbol)
@@ -244,10 +255,20 @@ double Calculate(const double a, const double b, const char symbol)
 		return a / b;
 	case '^':
 		double total = 1;
+		if (b < 0)
+		{
+			int temp = -b;
+			for (int i = 0; i < temp; ++i)
+			{
+				total *= a;
+			}
+			return 1/total;
+		}
 		for (int i = 0; i < b; ++i)
 		{
 			total *= a;
 		}
 		return total;
 	}
+	//return -1;
 }

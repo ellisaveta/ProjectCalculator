@@ -16,6 +16,7 @@
 #include <string>
 #include <vector>
 #include <fstream>
+#include <cmath>
 using namespace std;
 int TransformIntoNumber(const vector<int>);
 void Calculator(string);
@@ -56,8 +57,12 @@ bool Validation(string input)
 			{
 				++i;
 			}
-			if (input[i] == '0') return false;
-			--i;
+			if (i < input.length())
+			{
+				if (input[i] == '0') return false;
+				--i;
+			}
+			else return false;
 		}
 		else if (IsNumber(input[i])==false && IsOperator(input[i])==false && input[i]!=' ' && input[i]!='(' && input[i]!=')') return false;
 	}
@@ -254,21 +259,7 @@ double Calculate(const double a, const double b, const char symbol)
 	case '/':
 		return a / b;
 	case '^':
-		double total = 1;
-		if (b < 0)
-		{
-			int temp = -b;
-			for (int i = 0; i < temp; ++i)
-			{
-				total *= a;
-			}
-			return 1/total;
-		}
-		for (int i = 0; i < b; ++i)
-		{
-			total *= a;
-		}
-		return total;
+		return pow(a, b);
 	}
 	//return -1;
 }

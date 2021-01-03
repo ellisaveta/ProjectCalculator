@@ -20,7 +20,7 @@
 using namespace std;
 int TransformIntoNumber(const vector<int>);
 void Calculator(string);
-bool Validation(string);
+bool Validation(string&);
 bool IsNumber(const char);
 bool IsOperator(const char);
 bool ComparePrecendence(const char, const char);
@@ -45,7 +45,7 @@ int main()
 	return 0;
 }
 
-bool Validation(string input)
+bool Validation(string& input)
 {
 	if (input.empty()) return false;
 	for (int i = 0; i < input.length(); ++i)
@@ -63,6 +63,21 @@ bool Validation(string input)
 				--i;
 			}
 			else return false;
+		}
+		else if (input[i] == '-')
+		{
+			int j = i - 1;
+			while (j >= 0 && input[j] == ' ') --j;
+			if (j >= 0 && input[j] == '(')
+			{
+				input.insert(j+1, "0");
+				++i;
+			}
+			else if (j < 0)
+			{
+				input.insert(0, "0");
+				++i;
+			}
 		}
 		else if (IsNumber(input[i])==false && IsOperator(input[i])==false && input[i]!=' ' && input[i]!='(' && input[i]!=')') return false;
 	}

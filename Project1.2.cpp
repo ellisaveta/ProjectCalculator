@@ -24,7 +24,7 @@ bool Validation(string&);
 bool IsNumber(const char);
 bool IsOperator(const char);
 bool ComparePrecendence(const char, const char);
-double Calculate(const double, const double, const char);
+double Calculate(const double, const double, const char, bool&);
 int main()
 {
 	string input;
@@ -207,7 +207,13 @@ void Calculator(string input)
 			result.pop_back();
 			double a = result[result.size() - 1];
 			result.pop_back();
-			double total = Calculate(a, b, shYardString[i]);
+			bool correct=true;
+			double total = Calculate(a, b, shYardString[i], correct);
+			if (!correct)
+			{
+				cout << "NaN";
+				return;
+			}
 			result.push_back(total);
 		}
 	}
@@ -258,10 +264,10 @@ bool ComparePrecendence(const char first, const char sec)
 			if (sec == '+' || sec == '-' || sec == '*') return true;
 			return false;
 	}
-	//return false;
+	return false;
 }
 
-double Calculate(const double a, const double b, const char symbol)
+double Calculate(const double a, const double b, const char symbol, bool& correct)
 {
 	switch (symbol)
 	{
@@ -272,9 +278,15 @@ double Calculate(const double a, const double b, const char symbol)
 	case '*':
 		return a * b;
 	case '/':
+		if (b == 0)
+		{
+			correct = false;
+			return -1;
+		}
 		return a / b;
 	case '^':
 		return pow(a, b);
 	}
-	//return -1;
+	correct = false;
+	return -1;
 }

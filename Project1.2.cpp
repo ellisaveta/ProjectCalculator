@@ -102,10 +102,6 @@ void Calculator(string input)
 			shYardString.push_back(' ');
 			--i;
 		}
-		else if (input[i] == '^')
-		{
-			operators.push_back(input[i]);
-		}
 		else if (IsOperator(input[i]))
 		{
 			char o1 = input[i];
@@ -157,13 +153,6 @@ void Calculator(string input)
 			if (operators.size() > 0)
 			{
 				lastElementInOperators = operators[operators.size() - 1];
-			}
-			if (lastElementInOperators == '^') //If the last element is function, add it to the string
-			{
-				char op = lastElementInOperators;
-				shYardString.push_back(op);
-				shYardString.push_back(' ');
-				operators.pop_back();
 			}
 		}
 	}
@@ -263,6 +252,8 @@ bool ComparePrecendence(const char first, const char sec)
 		case '/':
 			if (sec == '+' || sec == '-' || sec == '*') return true;
 			return false;
+		case '^':
+			return true;
 	}
 	return false;
 }
